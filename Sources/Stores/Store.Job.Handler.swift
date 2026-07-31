@@ -2,10 +2,10 @@ public import Effects
 public import Store_Reduction_Primitives
 
 extension Store.Job {
-    /// Performs the bodies a runtime asks for.
     // Qualified with the module name: inside `extension Store.Job`, the unqualified
     // `Effect` resolves to the reduction algebra's nested `Store.Effect` and shadows
     // the effect owner's namespace.
+    /// Performs the bodies a runtime asks for.
     public struct Handler: Effects.Effect.Handler.`Protocol`, Sendable {
         let run: @Sendable (@escaping @Sendable () async -> Void) async -> Void
 
