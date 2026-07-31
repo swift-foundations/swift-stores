@@ -118,7 +118,7 @@ extension Store.Feature.Test.Unit {
 
     @Test func `teardown runs deepest first`() throws {
         let runtime = Store.Runtime(state: 0, update: Store.Feature.Test.counting)
-        let order = Order()
+        let order = Store.Feature.Test.Order()
 
         let root = try runtime.mountRoot()
         let parent = try runtime.mount("parent", under: root) { mount in
@@ -235,7 +235,7 @@ extension Store.Feature.Test.Unit {
 extension Store.Feature.Test.Integration {
     @Test func `an event bubbles until an ancestor consumes it`() throws {
         let runtime = Store.Runtime(state: 0, update: Store.Feature.Test.counting)
-        let order = Order()
+        let order = Store.Feature.Test.Order()
 
         let root = try runtime.mountRoot { mount in
             mount.on(Store.Feature.Test.Saved.self) { _ in
@@ -257,7 +257,7 @@ extension Store.Feature.Test.Integration {
 
     @Test func `an ancestor may transform an event into a different one`() throws {
         let runtime = Store.Runtime(state: 0, update: Store.Feature.Test.counting)
-        let seen = Order()
+        let seen = Store.Feature.Test.Order()
 
         let root = try runtime.mountRoot { mount in
             mount.on(Store.Feature.Test.Refresh.self) { refresh in

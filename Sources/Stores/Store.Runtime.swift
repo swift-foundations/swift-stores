@@ -91,7 +91,10 @@ extension Store {
             // REASON: than dynamic dispatch.
             isolation: isolated (any Actor)? = #isolation  // swiftlint:disable:this no_any_protocol_existential
         ) {
-            self.state = state
+            // Initializes the macro-generated backing storage directly: assigning
+            // through `state` routes into the tracked property's `_modify` accessor,
+            // which reads uninitialized storage during `init`.
+            self._state = state
             self.update = update
             self.scope = scope
             self.projection = projection
