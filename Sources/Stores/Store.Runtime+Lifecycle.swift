@@ -12,7 +12,7 @@ extension Store.Runtime {
     ) throws(Store.Error) -> Store.Feature.Handle {
         var mount = Store.Feature.Mount()
         configure(&mount)
-        do {
+        do throws(Registry.Error) {
             return Store.Feature.Handle(try _features.mountRoot(mount))
         } catch {
             throw Store.Error(error)
@@ -36,7 +36,7 @@ extension Store.Runtime {
     ) throws(Store.Error) -> Store.Feature.Handle {
         var mount = Store.Feature.Mount()
         configure(&mount)
-        do {
+        do throws(Registry.Error) {
             return Store.Feature.Handle(try _features.mount(mount, named: name, under: parent.registry))
         } catch {
             throw Store.Error(error)
@@ -62,7 +62,7 @@ extension Store.Runtime {
             }
         }
 
-        do {
+        do throws(Registry.Error) {
             try _features.dismount(handle.registry)
         } catch {
             throw Store.Error(error)

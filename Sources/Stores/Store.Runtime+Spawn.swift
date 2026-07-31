@@ -48,14 +48,12 @@ extension Store.Runtime {
             isolation: isolation
         )
 
-        do {
-            try mount(name, under: parent) { mount in
-                configure(&mount)
-                mount.renders { child.view() }
-                mount.onDismount { child.cancelAll() }
-            }
-        } catch {
-            throw error
+        // `mount` already throws exactly this function's error type, so there is
+        // nothing to translate and a `do` here would only widen it.
+        try mount(name, under: parent) { mount in
+            configure(&mount)
+            mount.renders { child.view() }
+            mount.onDismount { child.cancelAll() }
         }
 
         return child

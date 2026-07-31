@@ -48,7 +48,7 @@ extension Registry.Mounts {
     /// - Returns: A handle to the mounted root.
     /// - Throws: ``Registry/Error/rootOccupied`` if a root is already mounted.
     mutating func mountRoot(_ node: Node) throws(Registry.Error) -> Registry.Handle {
-        do {
+        do throws(Storage.Error) {
             return Registry.Handle(try storage.insert(node, at: Storage.Insert.Position.root))
         } catch {
             throw Registry.Error(error)
@@ -69,7 +69,7 @@ extension Registry.Mounts {
         named name: String,
         under parent: Registry.Handle
     ) throws(Registry.Error) -> Registry.Handle {
-        do {
+        do throws(Storage.Error) {
             return Registry.Handle(try storage.insert(node, at: .child(of: parent.position, key: name)))
         } catch {
             throw Registry.Error(error)
@@ -82,7 +82,7 @@ extension Registry.Mounts {
     /// - Throws: ``Registry/Error/stale`` if the handle no longer names a mounted node.
     mutating func dismount(_ handle: Registry.Handle) throws(Registry.Error) {
         guard holds(handle) else { throw .stale }
-        do {
+        do throws(__TreeError) {
             try storage.removeSubtree(at: handle.position)
         } catch {
             throw .stale
