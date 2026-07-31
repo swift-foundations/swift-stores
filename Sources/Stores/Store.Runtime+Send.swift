@@ -74,7 +74,10 @@ extension Store.Runtime {
 
         case .run(let work):
             let body = work.body
-            await Effect.perform(Store.Job { await body(send) })
+            // Qualified with the module name: inside `extension Store.Runtime`, the
+            // unqualified `Effect` resolves to the reduction algebra's nested
+            // `Store.Effect` and shadows the effect owner's namespace.
+            await Effects.Effect.perform(Store.Job { await body(send) })
 
         case .merge(let effects):
             await withTaskGroup(of: Void.self) { group in

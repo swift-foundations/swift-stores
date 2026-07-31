@@ -3,7 +3,10 @@ public import Store_Reduction_Primitives
 
 extension Store.Job {
     /// Performs the bodies a runtime asks for.
-    public struct Handler: Effect.Handler.`Protocol`, Sendable {
+    // Qualified with the module name: inside `extension Store.Job`, the unqualified
+    // `Effect` resolves to the reduction algebra's nested `Store.Effect` and shadows
+    // the effect owner's namespace.
+    public struct Handler: Effects.Effect.Handler.`Protocol`, Sendable {
         let run: @Sendable (@escaping @Sendable () async -> Void) async -> Void
 
         /// Creates a handler.
@@ -20,7 +23,7 @@ extension Store.Job.Handler {
 
     public func handle(
         _ effect: borrowing Store.Job,
-        continuation: consuming Effect.Continuation.One<Void, Never>
+        continuation: consuming Effects.Effect.Continuation.One<Void, Never>
     ) async {
         let body = effect.body
         await run(body)
