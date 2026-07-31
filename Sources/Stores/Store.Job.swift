@@ -22,7 +22,7 @@ extension Store {
     ///     // every unit of work this runtime starts now runs inline
     /// }
     /// ```
-    public struct Job: Effect.`Protocol`, EffectWithHandler, Sendable {
+    public struct Job: Effects.Effect.`Protocol`, EffectWithHandler, Sendable {
         /// The body to perform.
         public let body: @Sendable () async -> Void
 

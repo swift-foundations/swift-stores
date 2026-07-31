@@ -1,4 +1,4 @@
-internal import Observations
+public import Observations
 public import Store_Reduction_Primitives
 
 extension Store {
