@@ -1,5 +1,5 @@
-public import Store_Reduction_Primitives
 public import Dependencies
+public import Store_Reduction_Primitives
 
 extension Store {
     /// The dependency scope a runtime's reductions and effect bodies run inside.

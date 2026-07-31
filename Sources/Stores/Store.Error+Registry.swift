@@ -6,8 +6,10 @@ extension Store.Error {
         switch error {
         case .stale:
             self = .notMounted
+
         case .rootOccupied:
             self = .rootAlreadyMounted
+
         case .nameOccupied(let name):
             self = .nameOccupied(name)
         }

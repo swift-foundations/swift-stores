@@ -9,11 +9,9 @@ extension Store.Values {
     struct Entry: Sendable {
         let identity: ObjectIdentifier
 
-        let value: any Sendable
-
-        init(identity: ObjectIdentifier, value: any Sendable) {
-            self.identity = identity
-            self.value = value
-        }
+        // REASON: the box for key-addressed values and bubbling events. Heterogeneous storage has
+        // REASON: no generic form; the concrete type is recovered by a checked cast at a single
+        // REASON: typed boundary, and the public surface stays generic over the key or event type.
+        let value: any Sendable  // swiftlint:disable:this no_any_protocol_existential
     }
 }

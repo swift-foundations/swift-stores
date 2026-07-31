@@ -1,5 +1,5 @@
-public import Store_Reduction_Primitives
 internal import Effects
+public import Store_Reduction_Primitives
 
 extension Store.Runtime {
     /// Advances ``state`` by `action`, then performs whatever the reduction asked for.
@@ -53,7 +53,7 @@ extension Store.Runtime {
         let task = Task { [weak self] in
             await Self.execute(effect, send: send)
             guard let self else { return }
-            await self.retire(ticket, isolation: self.isolation)
+            await retire(ticket, isolation: isolation)
         }
 
         _inFlight.record(.init(cancellation: cancellation, task: task), as: ticket)
@@ -106,20 +106,26 @@ extension Store.Runtime {
     func sender() -> Store.Send<Action> {
         Store.Send { [weak self] action in
             guard let self else { return }
-            await self.accept(action, isolation: self.isolation)
+            await accept(action, isolation: isolation)
         }
     }
 
+    // REASON: `isolated (any Actor)?` is the language's only spelling for an isolated-actor
+    // REASON: parameter — there is no generic form — and it performs an executor hop rather
+    // REASON: than dynamic dispatch.
     /// Receives `action` back on this runtime's own isolation.
     ///
     /// The isolated parameter is what performs the hop: work may run anywhere, and
     /// this is where it comes home before touching state.
-    private func accept(_ action: Action, isolation: isolated (any Actor)?) async {
+    private func accept(_ action: Action, isolation: isolated (any Actor)?) async {  // swiftlint:disable:this no_any_protocol_existential
         send(action)
     }
 
+    // REASON: `isolated (any Actor)?` is the language's only spelling for an isolated-actor
+    // REASON: parameter — there is no generic form — and it performs an executor hop rather
+    // REASON: than dynamic dispatch.
     /// Stops recording the work under `ticket`.
-    private func retire(_ ticket: UInt64, isolation: isolated (any Actor)?) async {
+    private func retire(_ ticket: UInt64, isolation: isolated (any Actor)?) async {  // swiftlint:disable:this no_any_protocol_existential
         _inFlight.discard(ticket)
     }
 

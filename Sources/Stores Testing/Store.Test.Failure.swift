@@ -20,9 +20,11 @@ extension Store.Test {
                     expected: \(Store.Test.render(expected))
                     actual:   \(Store.Test.render(actual))
                     """
+
             case .unfinishedWork(let names):
                 let listed = names.map(\.name).joined(separator: ", ")
                 return "work was still in flight when the test finished: \(listed)"
+
             case .neverSettled:
                 return "the store never settled: work kept starting more work"
             }

@@ -34,14 +34,18 @@ extension Store.Feature.Test {
                 return .none
 
             case .load:
-                return .run(Store.Work(cancellation: "load") { send in
-                    await send(.set(41))
-                })
+                return .run(
+                    Store.Work(cancellation: "load") { send in
+                        await send(.set(41))
+                    }
+                )
 
             case .loadSlowly:
-                return .run(Store.Work(cancellation: "slow") { _ in
-                    try? await Task.sleep(for: .seconds(60))
-                })
+                return .run(
+                    Store.Work(cancellation: "slow") { _ in
+                        try? await Task.sleep(for: .seconds(60))
+                    }
+                )
             }
         }
     }

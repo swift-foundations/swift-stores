@@ -1,5 +1,5 @@
-public import Stores
 public import Clocks
+public import Stores
 
 extension Store.Test {
     /// A store that requires every step to state its outcome.
@@ -46,7 +46,10 @@ extension Store.Test {
             scope: Store.Scope = .inherited,
             redacting redaction: Store.Redaction = .nothing,
             projection: @escaping @Sendable (State) -> Store.View.Node = { _ in .empty },
-            isolation: isolated (any Actor)? = #isolation
+            // REASON: `isolated (any Actor)?` is the language's only spelling for an isolated-actor
+            // REASON: parameter — there is no generic form — and it performs an executor hop rather
+            // REASON: than dynamic dispatch.
+            isolation: isolated (any Actor)? = #isolation  // swiftlint:disable:this no_any_protocol_existential
         ) {
             self.clock = clock
             self.redaction = redaction
@@ -109,7 +112,10 @@ extension Store.Test.Runtime {
     ///   - isolation: The isolation to return to. Defaults to the caller's.
     public func advance(
         by duration: Duration,
-        isolation: isolated (any Actor)? = #isolation
+        // REASON: `isolated (any Actor)?` is the language's only spelling for an isolated-actor
+        // REASON: parameter — there is no generic form — and it performs an executor hop rather
+        // REASON: than dynamic dispatch.
+        isolation: isolated (any Actor)? = #isolation  // swiftlint:disable:this no_any_protocol_existential
     ) async {
         clock.advance(by: duration)
         await settle(isolation: isolation)
@@ -122,7 +128,10 @@ extension Store.Test.Runtime {
     ///   - isolation: The isolation to return to. Defaults to the caller's.
     public func settle(
         turns: Int = 1_000,
-        isolation: isolated (any Actor)? = #isolation
+        // REASON: `isolated (any Actor)?` is the language's only spelling for an isolated-actor
+        // REASON: parameter — there is no generic form — and it performs an executor hop rather
+        // REASON: than dynamic dispatch.
+        isolation: isolated (any Actor)? = #isolation  // swiftlint:disable:this no_any_protocol_existential
     ) async {
         for _ in 0..<turns where !store.isSettled {
             await Task.yield()
@@ -137,7 +146,10 @@ extension Store.Test.Runtime {
     /// - Throws: ``Store/Test/Failure/unfinishedWork(_:)`` if work is still in flight.
     public func finish(
         turns: Int = 1_000,
-        isolation: isolated (any Actor)? = #isolation
+        // REASON: `isolated (any Actor)?` is the language's only spelling for an isolated-actor
+        // REASON: parameter — there is no generic form — and it performs an executor hop rather
+        // REASON: than dynamic dispatch.
+        isolation: isolated (any Actor)? = #isolation  // swiftlint:disable:this no_any_protocol_existential
     ) async throws(Store.Test.Failure) {
         await settle(turns: turns, isolation: isolation)
         guard store.isSettled else {

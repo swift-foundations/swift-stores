@@ -1,5 +1,5 @@
-public import Store_Reduction_Primitives
 internal import Observations
+public import Store_Reduction_Primitives
 
 extension Store {
     /// A live store: state, the reduction that advances it, the features mounted
@@ -51,8 +51,11 @@ extension Store {
         /// The dependency overrides in force for everything this runtime runs.
         public let scope: Store.Scope
 
+        // REASON: `isolated (any Actor)?` is the language's only spelling for an isolated-actor
+        // REASON: parameter — there is no generic form — and it performs an executor hop rather
+        // REASON: than dynamic dispatch.
         /// The isolation this runtime was created on and returns to.
-        public let isolation: (any Actor)?
+        public let isolation: (any Actor)?  // swiftlint:disable:this no_any_protocol_existential
 
         /// Renders ``state`` for assertions.
         let projection: @Sendable (State) -> Store.View.Node
@@ -83,7 +86,10 @@ extension Store {
             update: Store.Update<State, Action, Store.Work<Action>>,
             scope: Store.Scope = .inherited,
             projection: @escaping @Sendable (State) -> Store.View.Node = { _ in .empty },
-            isolation: isolated (any Actor)? = #isolation
+            // REASON: `isolated (any Actor)?` is the language's only spelling for an isolated-actor
+            // REASON: parameter — there is no generic form — and it performs an executor hop rather
+            // REASON: than dynamic dispatch.
+            isolation: isolated (any Actor)? = #isolation  // swiftlint:disable:this no_any_protocol_existential
         ) {
             self.state = state
             self.update = update

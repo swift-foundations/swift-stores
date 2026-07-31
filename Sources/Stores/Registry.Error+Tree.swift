@@ -6,10 +6,13 @@ extension Registry.Error {
         switch error {
         case .invalidPosition:
             self = .stale
+
         case .rootOccupied:
             self = .rootOccupied
+
         case .keyOccupied(let key):
             self = .nameOccupied(key)
+
         case .cannotRemoveNonLeaf:
             self = .stale
         }

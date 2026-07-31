@@ -1,5 +1,5 @@
-public import Store_Reduction_Primitives
 public import Effects
+public import Store_Reduction_Primitives
 
 extension Store.Job {
     /// Performs the bodies a runtime asks for.

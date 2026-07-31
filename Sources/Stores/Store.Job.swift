@@ -1,5 +1,5 @@
-public import Store_Reduction_Primitives
 public import Effects
+public import Store_Reduction_Primitives
 
 extension Store {
     /// The request through which a runtime asks for a body of work to be performed.

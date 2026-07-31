@@ -33,14 +33,18 @@ extension Store.Test.Suites {
                 return .none
 
             case .load:
-                return .run(Store.Work(cancellation: "load") { send in
-                    await send(.set(41))
-                })
+                return .run(
+                    Store.Work(cancellation: "load") { send in
+                        await send(.set(41))
+                    }
+                )
 
             case .linger:
-                return .run(Store.Work(cancellation: "linger") { _ in
-                    try? await Task.sleep(for: .seconds(60))
-                })
+                return .run(
+                    Store.Work(cancellation: "linger") { _ in
+                        try? await Task.sleep(for: .seconds(60))
+                    }
+                )
             }
         }
     }

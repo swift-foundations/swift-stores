@@ -5,10 +5,5 @@ extension Store.Work {
     struct Record: Sendable {
         let cancellation: Store.Cancellation.ID?
         let task: Task<Void, Never>
-
-        init(cancellation: Store.Cancellation.ID?, task: Task<Void, Never>) {
-            self.cancellation = cancellation
-            self.task = task
-        }
     }
 }

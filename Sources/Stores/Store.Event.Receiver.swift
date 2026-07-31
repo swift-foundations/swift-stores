@@ -9,9 +9,15 @@ extension Store.Event {
     /// for an event whose type it does not recognise, which is what lets receivers
     /// for unrelated event types sit side by side.
     struct Receiver: Sendable {
-        let accept: @Sendable (any Sendable) -> Store.Event.Disposition
+        // REASON: the box for key-addressed values and bubbling events. Heterogeneous storage has
+        // REASON: no generic form; the concrete type is recovered by a checked cast at a single
+        // REASON: typed boundary, and the public surface stays generic over the key or event type.
+        let accept: @Sendable (any Sendable) -> Store.Event.Disposition  // swiftlint:disable:this no_any_protocol_existential
 
-        init(accept: @escaping @Sendable (any Sendable) -> Store.Event.Disposition) {
+        // REASON: the box for key-addressed values and bubbling events. Heterogeneous storage has
+        // REASON: no generic form; the concrete type is recovered by a checked cast at a single
+        // REASON: typed boundary, and the public surface stays generic over the key or event type.
+        init(accept: @escaping @Sendable (any Sendable) -> Store.Event.Disposition) {  // swiftlint:disable:this no_any_protocol_existential
             self.accept = accept
         }
     }

@@ -1,5 +1,5 @@
-public import Store_Reduction_Primitives
 public import Algebra_Monoid_Primitives
+public import Store_Reduction_Primitives
 
 // MARK: - Downward
 
@@ -96,7 +96,10 @@ extension Store.Runtime {
     /// - Returns: Whether some ancestor consumed it.
     @discardableResult
     public func raise<E: Sendable>(_ event: E, from handle: Store.Feature.Handle) -> Bool {
-        var current: any Sendable = event
+        // REASON: the box for key-addressed values and bubbling events. Heterogeneous storage has
+        // REASON: no generic form; the concrete type is recovered by a checked cast at a single
+        // REASON: typed boundary, and the public surface stays generic over the key or event type.
+        var current: any Sendable = event  // swiftlint:disable:this no_any_protocol_existential
 
         for ancestor in _features.ancestors(of: handle.registry) {
             guard let mount = _features.node(at: ancestor) else { continue }
@@ -104,8 +107,10 @@ extension Store.Runtime {
                 switch receiver.accept(current) {
                 case .ignored:
                     continue
+
                 case .consumed:
                     return true
+
                 case .transformed(let replacement):
                     current = replacement
                 }
