@@ -10,14 +10,16 @@ internal import Hash_Primitives
 /// therefore an observable law here, which is exactly what selects the ordered
 /// sibling over the plain one.
 struct Ledger<Value: Sendable>: ~Copyable {
-    /// A ticket identifying one row for as long as it is held.
-    typealias Ticket = UInt64
-
     private var storage: Dictionary_Primitive.Dictionary<Ticket, Value>.Ordered
 
     init() {
         self.storage = Dictionary_Primitive.Dictionary<Ticket, Value>.Ordered()
     }
+}
+
+extension Ledger {
+    /// A ticket identifying one row for as long as it is held.
+    typealias Ticket = UInt64
 }
 
 extension Ledger {
@@ -55,7 +57,7 @@ extension Ledger {
     }
 
     /// Removes every row.
-    mutating func discardAll() {
+    mutating func discard() {
         storage.removeAll()
     }
 }

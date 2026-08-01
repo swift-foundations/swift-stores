@@ -46,7 +46,7 @@ extension Store.Runtime {
         _ value: K.Value,
         at handle: Store.Feature.Handle
     ) throws(Store.Error) {
-        let applied = _features.withNode(at: handle.registry) { mount in
+        let applied = _features.update(at: handle.registry) { mount in
             mount.values.set(key, to: value)
         }
         guard applied != nil else { throw .notMounted }

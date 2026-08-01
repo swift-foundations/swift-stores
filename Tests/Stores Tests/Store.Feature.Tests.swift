@@ -43,6 +43,8 @@ extension Store.Feature.Test {
             case .loadSlowly:
                 return .run(
                     Store.Work(cancellation: "slow") { _ in
+                        // swift-linter:disable:next try optional
+                        // REASON: Task.sleep(for:) throws untyped (CancellationError); test intentionally discards a cancellation signal here.
                         try? await Task.sleep(for: .seconds(60))
                     }
                 )
@@ -54,17 +56,9 @@ extension Store.Feature.Test {
         .init(fields: [.init("count", "\(count)")])
     }
 
-    enum Theme: Store.Key.`Protocol` {
-        static var initial: String { "system" }
-    }
+    enum Theme: Store.Key.`Protocol` {}
 
-    enum Warnings: Store.Key.Aggregate {
-        typealias Value = [String]
-
-        static var aggregation: Algebra.Monoid<[String]> {
-            .init(identity: [], combining: +)
-        }
-    }
+    enum Warnings: Store.Key.Aggregate {}
 
     struct Saved: Sendable, Equatable {
         let id: Int
@@ -72,6 +66,18 @@ extension Store.Feature.Test {
 
     struct Refresh: Sendable, Equatable {
         let id: Int
+    }
+}
+
+extension Store.Feature.Test.Theme {
+    static var initial: String { "system" }
+}
+
+extension Store.Feature.Test.Warnings {
+    typealias Value = [String]
+
+    static var aggregation: Algebra.Monoid<[String]> {
+        .init(identity: [], combining: +)
     }
 }
 
@@ -369,13 +375,15 @@ extension Store.Feature.Test {
     /// Records the order things happened in, from closures that cannot be `inout`.
     final class Order: @unchecked Sendable {
         private let lock = Mutex<[String]>([])
+    }
+}
 
-        func record(_ entry: String) {
-            lock.withLock { $0.append(entry) }
-        }
+extension Store.Feature.Test.Order {
+    func record(_ entry: String) {
+        lock.withLock { $0.append(entry) }
+    }
 
-        var recorded: [String] {
-            lock.withLock { $0 }
-        }
+    var recorded: [String] {
+        lock.withLock { $0 }
     }
 }

@@ -10,14 +10,16 @@ extension Registry {
     /// construction. A nested map would have to grow all four, and the fourth
     /// badly.
     struct Mounts<Node: Sendable> {
-        typealias Storage = Tree<Node>.Keyed<String>
-
         private var storage: Storage
 
         init() {
             self.storage = Storage()
         }
     }
+}
+
+extension Registry.Mounts {
+    typealias Storage = Tree<Node>.Keyed<String>
 }
 
 // MARK: - Structure
@@ -35,6 +37,8 @@ extension Registry.Mounts {
 
     /// Whether `handle` still names a mounted node.
     func holds(_ handle: Registry.Handle) -> Bool {
+        // swift-linter:disable:next raw value access
+        // REASON: same-package implementation access to Registry.Handle's brand-newtype position, per rule's own carve-out.
         storage.peek(at: handle.position) != nil
     }
 }
@@ -47,7 +51,7 @@ extension Registry.Mounts {
     /// - Parameter node: The node to mount.
     /// - Returns: A handle to the mounted root.
     /// - Throws: ``Registry/Error/rootOccupied`` if a root is already mounted.
-    mutating func mountRoot(_ node: Node) throws(Registry.Error) -> Registry.Handle {
+    mutating func mount(_ node: Node) throws(Registry.Error) -> Registry.Handle {
         do throws(Storage.Error) {
             return Registry.Handle(try storage.insert(node, at: Storage.Insert.Position.root))
         } catch {
@@ -70,6 +74,8 @@ extension Registry.Mounts {
         under parent: Registry.Handle
     ) throws(Registry.Error) -> Registry.Handle {
         do throws(Storage.Error) {
+            // swift-linter:disable:next raw value access
+            // REASON: same-package implementation access to Registry.Handle's brand-newtype position, per rule's own carve-out.
             return Registry.Handle(try storage.insert(node, at: .child(of: parent.position, key: name)))
         } catch {
             throw Registry.Error(error)
@@ -83,6 +89,8 @@ extension Registry.Mounts {
     mutating func dismount(_ handle: Registry.Handle) throws(Registry.Error) {
         guard holds(handle) else { throw .stale }
         do throws(__TreeError) {
+            // swift-linter:disable:next raw value access
+            // REASON: same-package implementation access to Registry.Handle's brand-newtype position, per rule's own carve-out.
             try storage.removeSubtree(at: handle.position)
         } catch {
             throw .stale
@@ -95,6 +103,8 @@ extension Registry.Mounts {
 extension Registry.Mounts {
     /// The node at `handle`, or `nil` if it is no longer mounted.
     func node(at handle: Registry.Handle) -> Node? {
+        // swift-linter:disable:next raw value access
+        // REASON: same-package implementation access to Registry.Handle's brand-newtype position, per rule's own carve-out.
         storage.peek(at: handle.position)
     }
 
@@ -105,7 +115,9 @@ extension Registry.Mounts {
     ///
     /// - Returns: What `body` returned, or `nil` if the node is no longer mounted.
     @discardableResult
-    mutating func withNode<R>(at handle: Registry.Handle, _ body: (inout Node) -> R) -> R? {
+    mutating func update<R>(at handle: Registry.Handle, _ body: (inout Node) -> R) -> R? {
+        // swift-linter:disable:next raw value access
+        // REASON: same-package implementation access to Registry.Handle's brand-newtype position, per rule's own carve-out.
         storage.withElementMut(at: handle.position, body)
     }
 }
@@ -115,16 +127,22 @@ extension Registry.Mounts {
 extension Registry.Mounts {
     /// The handle at `path`, counted from the root.
     func handle(at path: some Swift.Sequence<String>) -> Registry.Handle? {
+        // swift-linter:disable:next raw value access
+        // REASON: same-package implementation access to Registry.Handle's brand-newtype position, per rule's own carve-out.
         storage.position(at: path).map(Registry.Handle.init)
     }
 
     /// The path from the root to `handle`.
     func path(to handle: Registry.Handle) -> [String]? {
+        // swift-linter:disable:next raw value access
+        // REASON: same-package implementation access to Registry.Handle's brand-newtype position, per rule's own carve-out.
         storage.keyPath(to: handle.position)
     }
 
     /// The name addressing `handle` among its siblings, or `nil` for the root.
     func name(of handle: Registry.Handle) -> String? {
+        // swift-linter:disable:next raw value access
+        // REASON: same-package implementation access to Registry.Handle's brand-newtype position, per rule's own carve-out.
         storage.key(of: handle.position)
     }
 }
@@ -134,7 +152,11 @@ extension Registry.Mounts {
 extension Registry.Mounts {
     /// The children of `handle`, in the order they were mounted.
     func children(of handle: Registry.Handle) -> [(name: String, handle: Registry.Handle)] {
+        // swift-linter:disable:next raw value access
+        // REASON: same-package implementation access to Registry.Handle's brand-newtype position, per rule's own carve-out.
         guard let children = storage.children(of: handle.position) else { return [] }
+        // swift-linter:disable:next raw value access
+        // REASON: same-package implementation access to Registry.Handle's brand-newtype position, per rule's own carve-out.
         return children.map { (name: $0.key, handle: Registry.Handle($0.position)) }
     }
 
@@ -143,6 +165,8 @@ extension Registry.Mounts {
     /// This is the path an event walks as it bubbles.
     func ancestors(of handle: Registry.Handle) -> [Registry.Handle] {
         var result: [Registry.Handle] = []
+        // swift-linter:disable:next raw value access
+        // REASON: same-package implementation access to Registry.Handle's brand-newtype position, per rule's own carve-out.
         var current = handle.position
         while let parent = storage.parent(of: current) {
             result.append(Registry.Handle(parent))

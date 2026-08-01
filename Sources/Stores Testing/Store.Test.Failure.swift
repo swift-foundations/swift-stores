@@ -11,23 +11,25 @@ extension Store.Test {
 
         /// The store did not settle within the allowed number of turns.
         case neverSettled
+    }
+}
 
-        public var description: String {
-            switch self {
-            case .unexpectedView(let expected, let actual):
-                return """
-                    the view after this step is not the one the step stated.
-                    expected: \(Store.Test.render(expected))
-                    actual:   \(Store.Test.render(actual))
-                    """
+extension Store.Test.Failure {
+    public var description: String {
+        switch self {
+        case .unexpectedView(let expected, let actual):
+            return """
+                the view after this step is not the one the step stated.
+                expected: \(Store.Test.render(expected))
+                actual:   \(Store.Test.render(actual))
+                """
 
-            case .unfinishedWork(let names):
-                let listed = names.map(\.name).joined(separator: ", ")
-                return "work was still in flight when the test finished: \(listed)"
+        case .unfinishedWork(let names):
+            let listed = names.map(\.name).joined(separator: ", ")
+            return "work was still in flight when the test finished: \(listed)"
 
-            case .neverSettled:
-                return "the store never settled: work kept starting more work"
-            }
+        case .neverSettled:
+            return "the store never settled: work kept starting more work"
         }
     }
 }

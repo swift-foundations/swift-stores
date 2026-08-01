@@ -30,9 +30,11 @@ extension Store.Cancellation {
         public init(stringLiteral value: String) {
             self.init(value)
         }
+    }
+}
 
-        public var description: String {
-            name
-        }
+extension Store.Cancellation.ID {
+    public var description: String {
+        name
     }
 }

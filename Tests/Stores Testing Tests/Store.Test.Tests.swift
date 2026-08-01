@@ -42,6 +42,8 @@ extension Store.Test.Suites {
             case .linger:
                 return .run(
                     Store.Work(cancellation: "linger") { _ in
+                        // swift-linter:disable:next try optional
+                        // REASON: Task.sleep(for:) throws untyped (CancellationError); test intentionally discards a cancellation signal here.
                         try? await Task.sleep(for: .seconds(60))
                     }
                 )

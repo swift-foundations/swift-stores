@@ -13,7 +13,7 @@ extension Store.Runtime {
         var mount = Store.Feature.Mount()
         configure(&mount)
         do throws(Registry.Error) {
-            return Store.Feature.Handle(try _features.mountRoot(mount))
+            return Store.Feature.Handle(try _features.mount(mount))
         } catch {
             throw Store.Error(error)
         }
