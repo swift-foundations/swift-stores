@@ -41,7 +41,8 @@ extension Store.Runtime {
         // REASON: `isolated (any Actor)?` is the language's only spelling for an isolated-actor
         // REASON: parameter — there is no generic form — and it performs an executor hop rather
         // REASON: than dynamic dispatch.
-        isolation: isolated (any Actor)? = #isolation  // swiftlint:disable:this no_any_protocol_existential
+        // swiftlint:disable:this no_any_protocol_existential
+        isolation: isolated (any Actor)? = #isolation
     ) throws(Store.Error) -> Store.Runtime<ChildState, ChildAction> {
         let child = Store.Runtime<ChildState, ChildAction>(
             state: state,

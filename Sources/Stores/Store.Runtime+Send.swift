@@ -120,7 +120,8 @@ extension Store.Runtime {
     ///
     /// The isolated parameter is what performs the hop: work may run anywhere, and
     /// this is where it comes home before touching state.
-    private func accept(_ action: Action, isolation: isolated (any Actor)?) async {  // swiftlint:disable:this no_any_protocol_existential
+    // swiftlint:disable:this no_any_protocol_existential
+    private func accept(_ action: Action, isolation: isolated (any Actor)?) async {
         send(action)
     }
 
@@ -128,7 +129,8 @@ extension Store.Runtime {
     // REASON: parameter — there is no generic form — and it performs an executor hop rather
     // REASON: than dynamic dispatch.
     /// Stops recording the work under `ticket`.
-    private func retire(_ ticket: UInt64, isolation: isolated (any Actor)?) async {  // swiftlint:disable:this no_any_protocol_existential
+    // swiftlint:disable:this no_any_protocol_existential
+    private func retire(_ ticket: UInt64, isolation: isolated (any Actor)?) async {
         _inFlight.discard(ticket)
     }
 

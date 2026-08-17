@@ -12,7 +12,8 @@ extension Store.Job {
         /// Creates a handler.
         ///
         /// - Parameter run: Performs one body.
-        public init(_ run: @escaping @Sendable (@escaping @Sendable () async -> Void) async -> Void) {
+        public init(_ run: @escaping @Sendable (@escaping @Sendable () async -> Void) async -> Void)
+        {
             self.run = run
         }
     }

@@ -81,7 +81,8 @@ extension Store.Test.Suites.Unit {
         #expect {
             try store.send(.increment, becoming: .init(fields: [.init("count", "9")]))
         } throws: { error in
-            guard case .unexpectedView(let expected, let actual) = error as? Store.Test.Failure else {
+            guard case .unexpectedView(let expected, let actual) = error as? Store.Test.Failure
+            else {
                 return false
             }
             return expected.fields.first?.value == "9" && actual.fields.first?.value == "1"
@@ -112,7 +113,9 @@ extension Store.Test.Suites.Integration {
         await #expect {
             try await store.finish(turns: 4)
         } throws: { error in
-            guard case .unfinishedWork(let names) = error as? Store.Test.Failure else { return false }
+            guard case .unfinishedWork(let names) = error as? Store.Test.Failure else {
+                return false
+            }
             return names.map(\.name) == ["linger"]
         }
     }
