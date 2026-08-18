@@ -92,7 +92,9 @@ extension Store.Feature.Test.Unit {
     }
 
     @Test func `an effect that only sends is folded in without leaving work in flight`() {
-        let update = Store.Update<Int, Store.Feature.Test.Action, Store.Work<Store.Feature.Test.Action>> { count, action in
+        let update = Store.Update<
+            Int, Store.Feature.Test.Action, Store.Work<Store.Feature.Test.Action>
+        > { count, action in
             guard case .increment = action else {
                 count = 0
                 return .none
@@ -150,7 +152,8 @@ extension Store.Feature.Test.Unit {
 }
 
 extension Store.Feature.Test.`Edge Case` {
-    @Test func `a handle held past a dismount resolves to nothing, not to its replacement`() throws {
+    @Test func `a handle held past a dismount resolves to nothing, not to its replacement`() throws
+    {
         let runtime = Store.Runtime(state: 0, update: Store.Feature.Test.counting)
         let root = try runtime.mountRoot()
 
@@ -214,7 +217,9 @@ extension Store.Feature.Test.Unit {
 
     @Test func `contributions from a subtree combine under the key's monoid`() throws {
         let runtime = Store.Runtime(state: 0, update: Store.Feature.Test.counting)
-        let root = try runtime.mountRoot { $0.contribute(Store.Feature.Test.Warnings.self, ["root"]) }
+        let root = try runtime.mountRoot {
+            $0.contribute(Store.Feature.Test.Warnings.self, ["root"])
+        }
         let first = try runtime.mount("first", under: root) {
             $0.contribute(Store.Feature.Test.Warnings.self, ["first"])
         }
@@ -294,7 +299,9 @@ extension Store.Feature.Test.Integration {
 // MARK: - Spawned subtrees
 
 extension Store.Feature.Test.Integration {
-    @Test func `a spawned subtree reduces its own actions and the parent's state is untouched`() throws {
+    @Test func `a spawned subtree reduces its own actions and the parent's state is untouched`()
+        throws
+    {
         let runtime = Store.Runtime(state: 0, update: Store.Feature.Test.counting)
         let root = try runtime.mountRoot()
 

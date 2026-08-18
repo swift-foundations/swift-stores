@@ -37,7 +37,9 @@ extension Store.Runtime {
         var mount = Store.Feature.Mount()
         configure(&mount)
         do throws(Registry.Error) {
-            return Store.Feature.Handle(try _features.mount(mount, named: name, under: parent.registry))
+            return Store.Feature.Handle(
+                try _features.mount(mount, named: name, under: parent.registry)
+            )
         } catch {
             throw Store.Error(error)
         }
