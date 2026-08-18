@@ -76,7 +76,9 @@ extension Registry.Mounts {
         do throws(Storage.Error) {
             // swift-linter:disable:next raw value access
             // REASON: same-package implementation access to Registry.Handle's brand-newtype position, per rule's own carve-out.
-            return Registry.Handle(try storage.insert(node, at: .child(of: parent.position, key: name)))
+            return Registry.Handle(
+                try storage.insert(node, at: .child(of: parent.position, key: name))
+            )
         } catch {
             throw Registry.Error(error)
         }
