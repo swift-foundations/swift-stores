@@ -1,15 +1,15 @@
-// swift-tools-version: 6.3.3
+// swift-tools-version: 6.4
 
 import PackageDescription
 
 let package = Package(
     name: "swift-stores",
     platforms: [
-        .macOS(.v26),
-        .iOS(.v26),
-        .tvOS(.v26),
-        .watchOS(.v26),
-        .visionOS(.v26),
+        .macOS(.v27),
+        .iOS(.v27),
+        .tvOS(.v27),
+        .watchOS(.v27),
+        .visionOS(.v27),
     ],
     products: [
         .library(
@@ -22,17 +22,47 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/swift-primitives/swift-store-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-tree-keyed-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-deque-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-queue-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-dictionary-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-dictionary-ordered-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-hash-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-algebra-primitives.git", branch: "main"),
+        .package(
+            url: "https://github.com/swift-primitives/swift-store-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-tree-keyed-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-deque-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-queue-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-dictionary-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-dictionary-ordered-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-hash-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-algebra-primitives.git",
+            branch: "main"
+        ),
         .package(url: "https://github.com/swift-foundations/swift-effects.git", branch: "main"),
-        .package(url: "https://github.com/swift-foundations/swift-observations.git", branch: "main"),
-        .package(url: "https://github.com/swift-foundations/swift-dependencies.git", branch: "main"),
+        .package(
+            url: "https://github.com/swift-foundations/swift-observations.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-foundations/swift-dependencies.git",
+            branch: "main"
+        ),
         .package(url: "https://github.com/swift-foundations/swift-clocks.git", branch: "main"),
     ],
     targets: [
@@ -44,7 +74,10 @@ let package = Package(
                 .product(name: "Deque Primitives", package: "swift-deque-primitives"),
                 .product(name: "Queue Primitive", package: "swift-queue-primitives"),
                 .product(name: "Dictionary Primitive", package: "swift-dictionary-primitives"),
-                .product(name: "Dictionary Ordered Primitives", package: "swift-dictionary-ordered-primitives"),
+                .product(
+                    name: "Dictionary Ordered Primitives",
+                    package: "swift-dictionary-ordered-primitives"
+                ),
                 .product(name: "Hash Primitives", package: "swift-hash-primitives"),
                 .product(name: "Algebra Monoid Primitives", package: "swift-algebra-primitives"),
                 .product(name: "Effects", package: "swift-effects"),
