@@ -89,7 +89,8 @@ extension Store {
             // REASON: `isolated (any Actor)?` is the language's only spelling for an isolated-actor
             // REASON: parameter — there is no generic form — and it performs an executor hop rather
             // REASON: than dynamic dispatch.
-            isolation: isolated (any Actor)? = #isolation  // swiftlint:disable:this no_any_protocol_existential
+            // swiftlint:disable:this no_any_protocol_existential
+            isolation: isolated (any Actor)? = #isolation
         ) {
             // Initializes the macro-generated backing storage directly: assigning
             // through `state` routes into the tracked property's `_modify` accessor,

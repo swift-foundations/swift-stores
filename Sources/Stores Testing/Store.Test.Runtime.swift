@@ -49,7 +49,8 @@ extension Store.Test {
             // REASON: `isolated (any Actor)?` is the language's only spelling for an isolated-actor
             // REASON: parameter — there is no generic form — and it performs an executor hop rather
             // REASON: than dynamic dispatch.
-            isolation: isolated (any Actor)? = #isolation  // swiftlint:disable:this no_any_protocol_existential
+            // swiftlint:disable:this no_any_protocol_existential
+            isolation: isolated (any Actor)? = #isolation
         ) {
             self.clock = clock
             self.redaction = redaction
@@ -115,7 +116,8 @@ extension Store.Test.Runtime {
         // REASON: `isolated (any Actor)?` is the language's only spelling for an isolated-actor
         // REASON: parameter — there is no generic form — and it performs an executor hop rather
         // REASON: than dynamic dispatch.
-        isolation: isolated (any Actor)? = #isolation  // swiftlint:disable:this no_any_protocol_existential
+        // swiftlint:disable:this no_any_protocol_existential
+        isolation: isolated (any Actor)? = #isolation
     ) async {
         clock.advance(by: duration)
         await settle(isolation: isolation)
@@ -131,7 +133,8 @@ extension Store.Test.Runtime {
         // REASON: `isolated (any Actor)?` is the language's only spelling for an isolated-actor
         // REASON: parameter — there is no generic form — and it performs an executor hop rather
         // REASON: than dynamic dispatch.
-        isolation: isolated (any Actor)? = #isolation  // swiftlint:disable:this no_any_protocol_existential
+        // swiftlint:disable:this no_any_protocol_existential
+        isolation: isolated (any Actor)? = #isolation
     ) async {
         for _ in 0..<turns where !store.isSettled {
             await Task.yield()
@@ -149,7 +152,8 @@ extension Store.Test.Runtime {
         // REASON: `isolated (any Actor)?` is the language's only spelling for an isolated-actor
         // REASON: parameter — there is no generic form — and it performs an executor hop rather
         // REASON: than dynamic dispatch.
-        isolation: isolated (any Actor)? = #isolation  // swiftlint:disable:this no_any_protocol_existential
+        // swiftlint:disable:this no_any_protocol_existential
+        isolation: isolated (any Actor)? = #isolation
     ) async throws(Store.Test.Failure) {
         await settle(turns: turns, isolation: isolation)
         guard store.isSettled else {
