@@ -2,13 +2,7 @@ internal import Effects
 public import Store_Reduction_Primitives
 
 extension Store.Runtime {
-    /// Advances ``state`` by `action`, then performs whatever the reduction asked for.
-    ///
-    /// Sending is not reentrant. An action sent from inside a reduction — which is
-    /// what an effect's ``Store/Effect/send(_:)`` amounts to — is buffered and
-    /// reduced after the one in progress, in the order it arrived.
-    ///
-    /// - Parameter action: The action to apply.
+
     public func send(_ action: Action) {
         _pending.post(action)
         guard !_reducing else { return }
@@ -23,14 +17,8 @@ extension Store.Runtime {
     }
 }
 
-// MARK: - Interpreting effects
-
 extension Store.Runtime {
-    /// Starts whatever `effect` asked for.
-    ///
-    /// A bare `send` is folded straight into the buffer rather than started as work:
-    /// it needs nothing performed, and routing it through a task would make an
-    /// otherwise synchronous reduction observably asynchronous.
+
     func begin(_ effect: Store.Effect<Action, Store.Work<Action>>) {
         switch effect {
         case .none:
@@ -44,7 +32,6 @@ extension Store.Runtime {
         }
     }
 
-    /// Puts `effect` in flight and records it so it can be reported and stopped.
     private func start(_ effect: Store.Effect<Action, Store.Work<Action>>) {
         let ticket = mintTicket()
         let send = sender()
@@ -59,8 +46,6 @@ extension Store.Runtime {
         _inFlight.record(.init(cancellation: cancellation, task: task), as: ticket)
     }
 
-    /// Performs `effect`, honouring what each combinator promised: `merge` places
-    /// its children side by side, `sequence` runs them one after another.
     private static func execute(
         _ effect: Store.Effect<Action, Store.Work<Action>>,
         send: Store.Send<Action>
@@ -74,9 +59,7 @@ extension Store.Runtime {
 
         case .run(let work):
             let body = work.body
-            // Qualified with the module name: inside `extension Store.Runtime`, the
-            // unqualified `Effect` resolves to the reduction algebra's nested
-            // `Store.Effect` and shadows the effect owner's namespace.
+
             await Effects.Effect.perform(Store.Job { await body(send) })
 
         case .merge(let effects):
@@ -93,7 +76,6 @@ extension Store.Runtime {
         }
     }
 
-    /// The name a whole effect can be stopped under, when it has exactly one.
     private static func cancellation(
         of effect: Store.Effect<Action, Store.Work<Action>>
     ) -> Store.Cancellation.ID? {
@@ -102,10 +84,8 @@ extension Store.Runtime {
     }
 }
 
-// MARK: - Feeding actions back
-
 extension Store.Runtime {
-    /// A way for running work to feed actions back into this runtime.
+
     func sender() -> Store.Send<Action> {
         Store.Send { [weak self] action in
             guard let self else { return }
@@ -113,22 +93,11 @@ extension Store.Runtime {
         }
     }
 
-    // REASON: `isolated (any Actor)?` is the language's only spelling for an isolated-actor
-    // REASON: parameter — there is no generic form — and it performs an executor hop rather
-    // REASON: than dynamic dispatch.
-    /// Receives `action` back on this runtime's own isolation.
-    ///
-    /// The isolated parameter is what performs the hop: work may run anywhere, and
-    /// this is where it comes home before touching state.
-    private func accept(_ action: Action, isolation: isolated (any Actor)?) async {  // swiftlint:disable:this no_any_protocol_existential
+    private func accept(_ action: Action, isolation: isolated (any Actor)?) async {
         send(action)
     }
 
-    // REASON: `isolated (any Actor)?` is the language's only spelling for an isolated-actor
-    // REASON: parameter — there is no generic form — and it performs an executor hop rather
-    // REASON: than dynamic dispatch.
-    /// Stops recording the work under `ticket`.
-    private func retire(_ ticket: UInt64, isolation: isolated (any Actor)?) async {  // swiftlint:disable:this no_any_protocol_existential
+    private func retire(_ ticket: UInt64, isolation: isolated (any Actor)?) async {
         _inFlight.discard(ticket)
     }
 
@@ -138,15 +107,12 @@ extension Store.Runtime {
     }
 }
 
-// MARK: - Stopping work
-
 extension Store.Runtime {
-    /// Whether any work is still in flight.
+
     public var isSettled: Bool {
         _inFlight.isEmpty && _pending.isEmpty
     }
 
-    /// The names of the work currently in flight, oldest first.
     public var inFlight: [Store.Cancellation.ID] {
         var result: [Store.Cancellation.ID] = []
         _inFlight.forEach { _, record in
@@ -155,9 +121,6 @@ extension Store.Runtime {
         return result
     }
 
-    /// Stops every unit of work running under `id`.
-    ///
-    /// - Parameter id: The name the work was started under.
     public func cancel(_ id: Store.Cancellation.ID) {
         var doomed: [UInt64] = []
         _inFlight.forEach { ticket, record in
@@ -168,7 +131,6 @@ extension Store.Runtime {
         }
     }
 
-    /// Stops every unit of work this runtime has in flight.
     public func cancelAll() {
         for ticket in _inFlight.tickets {
             _inFlight.discard(ticket)?.task.cancel()

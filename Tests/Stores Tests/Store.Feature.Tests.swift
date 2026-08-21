@@ -12,8 +12,6 @@ extension Store.Feature {
     }
 }
 
-// MARK: - Fixtures
-
 extension Store.Feature.Test {
     enum Action: Sendable, Equatable {
         case increment
@@ -43,8 +41,7 @@ extension Store.Feature.Test {
             case .loadSlowly:
                 return .run(
                     Store.Work(cancellation: "slow") { _ in
-                        // swift-linter:disable:next try optional
-                        // REASON: Task.sleep(for:) throws untyped (CancellationError); test intentionally discards a cancellation signal here.
+
                         try? await Task.sleep(for: .seconds(60))
                     }
                 )
@@ -81,8 +78,6 @@ extension Store.Feature.Test.Warnings {
     }
 }
 
-// MARK: - Reduction
-
 extension Store.Feature.Test.Unit {
     @Test func `sending an action advances the state`() {
         let runtime = Store.Runtime(state: 0, update: Store.Feature.Test.counting)
@@ -92,7 +87,9 @@ extension Store.Feature.Test.Unit {
     }
 
     @Test func `an effect that only sends is folded in without leaving work in flight`() {
-        let update = Store.Update<Int, Store.Feature.Test.Action, Store.Work<Store.Feature.Test.Action>> { count, action in
+        let update = Store.Update<
+            Int, Store.Feature.Test.Action, Store.Work<Store.Feature.Test.Action>
+        > { count, action in
             guard case .increment = action else {
                 count = 0
                 return .none
@@ -108,8 +105,6 @@ extension Store.Feature.Test.Unit {
         #expect(runtime.isSettled)
     }
 }
-
-// MARK: - Lifecycle
 
 extension Store.Feature.Test.Unit {
     @Test func `a mounted feature is addressable by its path`() throws {
@@ -150,7 +145,8 @@ extension Store.Feature.Test.Unit {
 }
 
 extension Store.Feature.Test.`Edge Case` {
-    @Test func `a handle held past a dismount resolves to nothing, not to its replacement`() throws {
+    @Test func `a handle held past a dismount resolves to nothing, not to its replacement`() throws
+    {
         let runtime = Store.Runtime(state: 0, update: Store.Feature.Test.counting)
         let root = try runtime.mountRoot()
 
@@ -159,8 +155,6 @@ extension Store.Feature.Test.`Edge Case` {
 
         let second = try runtime.mount("detail", under: root)
 
-        // Same name, same path, same parent — and the stale handle must not answer
-        // for the feature that took the position.
         #expect(runtime.isMounted(second))
         #expect(!runtime.isMounted(first))
         #expect(first != second)
@@ -191,8 +185,6 @@ extension Store.Feature.Test.`Edge Case` {
     }
 }
 
-// MARK: - Communication
-
 extension Store.Feature.Test.Unit {
     @Test func `a value resolves from the nearest ancestor that supplied one`() throws {
         let runtime = Store.Runtime(state: 0, update: Store.Feature.Test.counting)
@@ -214,7 +206,9 @@ extension Store.Feature.Test.Unit {
 
     @Test func `contributions from a subtree combine under the key's monoid`() throws {
         let runtime = Store.Runtime(state: 0, update: Store.Feature.Test.counting)
-        let root = try runtime.mountRoot { $0.contribute(Store.Feature.Test.Warnings.self, ["root"]) }
+        let root = try runtime.mountRoot {
+            $0.contribute(Store.Feature.Test.Warnings.self, ["root"])
+        }
         let first = try runtime.mount("first", under: root) {
             $0.contribute(Store.Feature.Test.Warnings.self, ["first"])
         }
@@ -291,10 +285,10 @@ extension Store.Feature.Test.Integration {
     }
 }
 
-// MARK: - Spawned subtrees
-
 extension Store.Feature.Test.Integration {
-    @Test func `a spawned subtree reduces its own actions and the parent's state is untouched`() throws {
+    @Test func `a spawned subtree reduces its own actions and the parent's state is untouched`()
+        throws
+    {
         let runtime = Store.Runtime(state: 0, update: Store.Feature.Test.counting)
         let root = try runtime.mountRoot()
 
@@ -330,8 +324,6 @@ extension Store.Feature.Test.Integration {
         #expect(child.isSettled)
     }
 }
-
-// MARK: - Views
 
 extension Store.Feature.Test.Unit {
     @Test func `a redacted field keeps its name and loses its value`() {
@@ -369,10 +361,8 @@ extension Store.Feature.Test.Unit {
     }
 }
 
-// MARK: - Support
-
 extension Store.Feature.Test {
-    /// Records the order things happened in, from closures that cannot be `inout`.
+
     final class Order: @unchecked Sendable {
         private let lock = Mutex<[String]>([])
     }

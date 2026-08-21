@@ -11,8 +11,6 @@ extension Store.Test {
     }
 }
 
-// MARK: - Fixtures
-
 extension Store.Test.Suites {
     enum Action: Sendable, Equatable {
         case increment
@@ -42,8 +40,7 @@ extension Store.Test.Suites {
             case .linger:
                 return .run(
                     Store.Work(cancellation: "linger") { _ in
-                        // swift-linter:disable:next try optional
-                        // REASON: Task.sleep(for:) throws untyped (CancellationError); test intentionally discards a cancellation signal here.
+
                         try? await Task.sleep(for: .seconds(60))
                     }
                 )
@@ -67,8 +64,6 @@ extension Store.Test.Suites {
     }
 }
 
-// MARK: - Asserting
-
 extension Store.Test.Suites.Unit {
     @Test func `a step that states the right view passes`() throws {
         let store = Store.Test.Suites.store()
@@ -81,7 +76,8 @@ extension Store.Test.Suites.Unit {
         #expect {
             try store.send(.increment, becoming: .init(fields: [.init("count", "9")]))
         } throws: { error in
-            guard case .unexpectedView(let expected, let actual) = error as? Store.Test.Failure else {
+            guard case .unexpectedView(let expected, let actual) = error as? Store.Test.Failure
+            else {
                 return false
             }
             return expected.fields.first?.value == "9" && actual.fields.first?.value == "1"
@@ -90,12 +86,10 @@ extension Store.Test.Suites.Unit {
 
     @Test func `a withheld field cannot make a step fail`() throws {
         let store = Store.Test.Suites.store(redacting: .withholding("count"))
-        // The value is wrong on purpose: withheld means it is not what is being asserted.
+
         try store.send(.increment, becoming: .init(fields: [.init("count", "anything")]))
     }
 }
-
-// MARK: - Finishing
 
 extension Store.Test.Suites.Integration {
     @Test func `finishing succeeds once work has fed its result back`() async throws {
@@ -112,7 +106,9 @@ extension Store.Test.Suites.Integration {
         await #expect {
             try await store.finish(turns: 4)
         } throws: { error in
-            guard case .unfinishedWork(let names) = error as? Store.Test.Failure else { return false }
+            guard case .unfinishedWork(let names) = error as? Store.Test.Failure else {
+                return false
+            }
             return names.map(\.name) == ["linger"]
         }
     }
